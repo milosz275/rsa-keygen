@@ -2,17 +2,132 @@
 
 namespace RSA
 {
-	Keygen::Keygen() {}
+	Keygen::Keygen() : publicKey(0), privateKey(0), e("65537") {}
 
 	Keygen::~Keygen() {}
 
-	void Keygen::generateKeyPair(void) {}
+	mpz_class Keygen::getPublicKey(void) { return publicKey; }
 
-	mpz_t* Keygen::getPublicKey(void) {}
+	mpz_class Keygen::getPrivateKey(void) { return privateKey; }
 
-	mpz_t* Keygen::getPrivateKey(void) {}
+	void Keygen::generateKeyPair(int size)
+	{
+		// check if the keys are already created
+		if (publicKey != 0 || privateKey != 0)
+			std::cout << "Regenerating key pair" << std::endl;
+		else
+			std::cout << "Generating key pair" << std::endl;
 
-	void Keygen::encrypt(std::string text) {}
+		// initialize random state
+		gmp_randstate_t state;
+		gmp_randinit_default(state);
 
-	void Keygen::decrypt(std::string text) {}
+		// generate p and q
+		mpz_t p_raw, q_raw;
+		mpz_init(p_raw);
+		mpz_init(q_raw);
+		mpz_urandomb(p_raw, state, size);
+		mpz_urandomb(q_raw, state, size);
+
+		// set least significant bit to 1 to ensure odd primes
+		mpz_setbit(p_raw, 0);
+		mpz_setbit(q_raw, 0);
+
+		// find and set next prime after p and q
+		while (1)
+		{
+			mpz_nextprime(p_raw, p_raw);
+			if (mpz_probab_prime_p(p_raw, 32))
+				break;
+		}
+		while (1)
+		{
+			mpz_nextprime(q_raw, q_raw);
+			if (mpz_probab_prime_p(q_raw, 32))
+				break;
+		}
+
+		// convert to mpz_class
+		mpz_class p(p_raw);
+		mpz_class q(q_raw);
+
+		// clear mpz_t tmp variables
+		mpz_clear(p_raw);
+		mpz_clear(q_raw);
+
+		// assert p and q are equal
+		assert(p != q);
+
+		// clear random state
+		gmp_randclear(state);
+
+		// calculate n = p * q
+		mpz_class n = p * q;
+		publicKey = n;
+
+		// calculate phi_n
+		mpz_class phi_n = (p - 1) * (q - 1);
+		
+		// calculate d
+		mpz_t d_raw;
+		mpz_init(d_raw);
+		mpz_invert(d_raw, e.get_mpz_t(), phi_n.get_mpz_t());
+		mpz_class d(d_raw);
+		mpz_clear(d_raw);
+
+		// set private key
+		privateKey = d;
+	}
+
+	std::string Keygen::encrypt(std::string text)
+	{
+		// check and generate new key if needed
+		if (publicKey == 0 || privateKey == 0)
+		{
+			std::cout << "Key pair is not created!" << std::endl;
+			std::cout << "Creating now..." << std::endl;
+			generateKeyPair();
+		}
+		std::cout << "Encrypting..." << std::endl;
+
+		// initialize message as mpz
+		mpz_t message_raw;
+		mpz_init(message_raw);
+		mpz_init_set_str(message_raw, text.c_str(), 10);
+
+		// initialize encrypted message
+		mpz_t encrypted_raw;
+		mpz_init(encrypted_raw);
+		
+		// encrypt message
+		mpz_powm(encrypted_raw, message_raw, e.get_mpz_t(), publicKey.get_mpz_t());
+
+		// return string
+		mpz_class encrypted(encrypted_raw);
+		return std::string(encrypted.get_str());
+	}
+
+	std::string Keygen::decrypt(std::string text, mpz_class m_privateKey, mpz_class m_publicKey)
+	{
+		// check and throw exception
+		if (m_publicKey == 0 || m_privateKey == 0)
+			throw std::runtime_error("Key pair is not created! Cannot decrypt message");
+		std::cout << "Decrypting..." << std::endl;
+
+		// initialize message as mpz
+		mpz_t encrypted_raw;
+		mpz_init(encrypted_raw);
+		mpz_init_set_str(encrypted_raw, text.c_str(), 10);
+
+		// initialize encrypted message
+		mpz_t message_raw;
+		mpz_init(message_raw);
+
+		// decrypt message
+		mpz_powm(message_raw, encrypted_raw, m_privateKey.get_mpz_t(), m_publicKey.get_mpz_t());
+
+		// return string
+		mpz_class message(message_raw);
+		return std::string(message.get_str());
+	}
 }

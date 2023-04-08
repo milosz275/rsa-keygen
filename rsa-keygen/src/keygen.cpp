@@ -2,7 +2,7 @@
 
 namespace RSA
 {
-	Keygen::Keygen() : publicKey(0), privateKey(0), e("65537") {}
+	Keygen::Keygen() : publicKey(0), privateKey(0) {}
 
 	Keygen::~Keygen() {}
 
@@ -105,6 +105,7 @@ namespace RSA
 		// return string
 		mpz_class encrypted(encrypted_raw);
 		return std::string(encrypted.get_str());
+		//return textToOct(std::string(message.get_str()));
 	}
 
 	std::string Keygen::decrypt(std::string text, mpz_class m_privateKey, mpz_class m_publicKey)
@@ -114,12 +115,12 @@ namespace RSA
 			throw std::runtime_error("Key pair is not created! Cannot decrypt message");
 		std::cout << "Decrypting..." << std::endl;
 
-		// initialize message as mpz
+		// initialize encrypted message
 		mpz_t encrypted_raw;
 		mpz_init(encrypted_raw);
 		mpz_init_set_str(encrypted_raw, text.c_str(), 10);
 
-		// initialize encrypted message
+		// initialize message as mpz
 		mpz_t message_raw;
 		mpz_init(message_raw);
 
@@ -129,5 +130,20 @@ namespace RSA
 		// return string
 		mpz_class message(message_raw);
 		return std::string(message.get_str());
+		//return octToText(std::string(message.get_str()));
+	}
+
+	std::string textToOct(std::string text)
+	{
+
+		// return test
+		return std::string("");
+	}
+	
+	std::string octToText(std::string text)
+	{
+	
+		// return test
+		return std::string("");
 	}
 }

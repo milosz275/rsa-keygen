@@ -90,10 +90,11 @@ namespace RSA
 		}
 		std::cout << "Encrypting..." << std::endl;
 
-		// initialize message as mpz
+		// initialize message as encoded mpz
 		mpz_t message_raw;
 		mpz_init(message_raw);
-		mpz_init_set_str(message_raw, text.c_str(), 10);
+		std::string message = textToOct(text);
+		mpz_init_set_str(message_raw, message.c_str(), 10);
 
 		// initialize encrypted message
 		mpz_t encrypted_raw;
@@ -101,10 +102,12 @@ namespace RSA
 		
 		// encrypt message
 		mpz_powm(encrypted_raw, message_raw, e.get_mpz_t(), publicKey.get_mpz_t());
+		mpz_clear(message_raw);
 
 		// return string
 		mpz_class encrypted(encrypted_raw);
-		return std::string(encrypted.get_str());
+		mpz_clear(encrypted_raw);
+		return encrypted.get_str();
 		//return textToOct(std::string(message.get_str()));
 	}
 
@@ -126,24 +129,66 @@ namespace RSA
 
 		// decrypt message
 		mpz_powm(message_raw, encrypted_raw, m_privateKey.get_mpz_t(), m_publicKey.get_mpz_t());
+		mpz_clear(encrypted_raw);
 
-		// return string
+		// create mpz class and clear mpz_t
 		mpz_class message(message_raw);
-		return std::string(message.get_str());
-		//return octToText(std::string(message.get_str()));
+		mpz_clear(message_raw);
+
+		// recreate potential 0 at the beginning
+		std::string full_message = message.get_str();
+		while (full_message.length() % 3 != 0)
+			full_message = std::string("0") + full_message;
+
+		// return final message
+		return octToText(full_message);
 	}
 
 	std::string textToOct(std::string text)
 	{
+		std::string encoded;
 
-		// return test
-		return std::string("");
+		for_each(text.begin(), text.end(), [&encoded](char& c)
+			{
+				int code = (int)c;
+				std::string partial = std::to_string(code);
+
+				if (code < 10)
+				{
+					encoded.push_back('0');
+					encoded.push_back('0');
+					encoded += partial;
+				}
+				else if (code < 100)
+				{
+					encoded.push_back('0');
+					encoded += partial;
+				}
+				else
+					encoded += partial;
+				
+			});
+
+		// return encoded text
+		return encoded;
 	}
 	
 	std::string octToText(std::string text)
 	{
-	
-		// return test
-		return std::string("");
+		assert(text.length() % 3 == 0);
+
+		std::string decoded;
+
+		for (int i = 2; i < text.length(); i += 3)
+		{
+			std::string partial;
+			partial.push_back(text[i - 2]);
+			partial.push_back(text[i - 1]);
+			partial.push_back(text[i]);
+			decoded.push_back((char)std::stoi(partial));
+		}
+
+		// return decoded text
+		return decoded;
 	}
 }

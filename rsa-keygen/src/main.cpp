@@ -5,15 +5,22 @@ int main(int argc, char* argv[])
 {
 	try
 	{
+		// create key generator and key pair
 		RSA::Keygen* K = new RSA::Keygen();
 		K->generateKeyPair(1024);
-		std::cout << "private key: " << K->getPrivateKey() << std::endl;
-		std::cout << "public key: " << K->getPublicKey() << std::endl;
-		std::string message("12345");
-		std::cout << "message to encrypt: " << message << std::endl;
+		std::cout << "private key: " << K->getPrivateKey() << std::endl << std::endl;
+		std::cout << "public key: " << K->getPublicKey() << std::endl << std::endl;
+
+		// encrypt and decrypt some data
+		std::string message("This message is safely encrypted:)");
+		std::cout << "message to encrypt: " << message << std::endl << std::endl;
+		
 		std::string encrypted_message = K->encrypt(message);
+		std::cout << "encrypted message: " << encrypted_message << std::endl << std::endl;
+		
 		std::string decrypted_message = K->decrypt(encrypted_message, K->getPrivateKey(), K->getPublicKey());
 		std::cout << "decrypted message: " << decrypted_message << std::endl;
+		
 		delete K;
 	}
 	catch (std::runtime_error& e)

@@ -17,6 +17,9 @@ namespace RSA
 			std::cout << "Regenerating key pair" << std::endl;
 		else
 			std::cout << "Generating key pair" << std::endl;
+		std::cout << "Using " << m_size << "-bit encryption" << std::endl;
+		if (m_size >= 2048)
+			std::cout << "It may take some time..." << std::endl;
 
 		// initialize random state
 		gmp_randstate_t state;

@@ -20,13 +20,15 @@ namespace RSA
 		mpz_class privateKey;
 		// public key
 		mpz_class publicKey;
+		// bits of a number to generate
+		const int m_size = 1024;
 	public:
 		// creates key generator
-		Keygen();
+		Keygen(int size = 1024);
 		// deletes the key generator
 		~Keygen();
 		// generates both private and public keys
-		void generateKeyPair(int size = 1024);
+		void generateKeyPair(void);
 		// returns generated public key
 		mpz_class getPublicKey(void);
 		// returns generated private key

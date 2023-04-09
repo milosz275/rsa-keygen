@@ -2,7 +2,7 @@
 
 namespace RSA
 {
-	Keygen::Keygen() : publicKey(0), privateKey(0) {}
+	Keygen::Keygen(int size) : m_size(size), publicKey(0), privateKey(0) {}
 
 	Keygen::~Keygen() {}
 
@@ -10,7 +10,7 @@ namespace RSA
 
 	mpz_class Keygen::getPrivateKey(void) { return privateKey; }
 
-	void Keygen::generateKeyPair(int size)
+	void Keygen::generateKeyPair(void)
 	{
 		// check if the keys are already created
 		if (publicKey != 0 || privateKey != 0)
@@ -21,13 +21,13 @@ namespace RSA
 		// initialize random state
 		gmp_randstate_t state;
 		gmp_randinit_default(state);
-
+		
 		// generate p and q
 		mpz_t p_raw, q_raw;
 		mpz_init(p_raw);
 		mpz_init(q_raw);
-		mpz_urandomb(p_raw, state, size);
-		mpz_urandomb(q_raw, state, size);
+		mpz_urandomb(p_raw, state, m_size);
+		mpz_urandomb(q_raw, state, m_size);
 
 		// set least significant bit to 1 to ensure odd primes
 		mpz_setbit(p_raw, 0);

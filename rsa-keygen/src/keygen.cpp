@@ -2,18 +2,18 @@
 
 namespace RSA
 {
-	Keygen::Keygen(int size) : m_size(size), publicKey(0), privateKey(0) {}
+	Keygen::Keygen(int size) : m_size(size), m_public_key(0), m_private_key(0) {}
 
 	Keygen::~Keygen() {}
 
-	mpz_class Keygen::getPublicKey(void) { return publicKey; }
+	mpz_class Keygen::get_public_key(void) { return m_public_key; }
 
-	mpz_class Keygen::getPrivateKey(void) { return privateKey; }
+	mpz_class Keygen::get_private_key(void) { return m_private_key; }
 
-	void Keygen::generateKeyPair(void)
+	void Keygen::generate_key_pair(void)
 	{
 		// check if the keys are already created
-		if (publicKey != 0 || privateKey != 0)
+		if (m_public_key != 0 || m_private_key != 0)
 			std::cout << "Regenerating key pair" << std::endl;
 		else
 			std::cout << "Generating key pair" << std::endl;
@@ -66,7 +66,7 @@ namespace RSA
 
 		// calculate n = p * q
 		mpz_class n = p * q;
-		publicKey = n;
+		m_public_key = n;
 
 		// calculate phi_n
 		mpz_class phi_n = (p - 1) * (q - 1);
@@ -79,24 +79,24 @@ namespace RSA
 		mpz_clear(d_raw);
 
 		// set private key
-		privateKey = d;
+		m_private_key = d;
 	}
 
 	std::string Keygen::encrypt(std::string text)
 	{
 		// check and generate new key if needed
-		if (publicKey == 0 || privateKey == 0)
+		if (m_public_key == 0 || m_private_key == 0)
 		{
 			std::cout << "Key pair is not created!" << std::endl;
 			std::cout << "Creating now..." << std::endl;
-			generateKeyPair();
+			generate_key_pair();
 		}
 		std::cout << "Encrypting..." << std::endl;
 
 		// initialize message as encoded mpz
 		mpz_t message_raw;
 		mpz_init(message_raw);
-		std::string message = textToOct(text);
+		std::string message = text_to_oct(text);
 		mpz_init_set_str(message_raw, message.c_str(), 10);
 
 		// initialize encrypted message
@@ -104,7 +104,7 @@ namespace RSA
 		mpz_init(encrypted_raw);
 		
 		// encrypt message
-		mpz_powm(encrypted_raw, message_raw, e.get_mpz_t(), publicKey.get_mpz_t());
+		mpz_powm(encrypted_raw, message_raw, e.get_mpz_t(), m_public_key.get_mpz_t());
 		mpz_clear(message_raw);
 
 		// return string
@@ -114,10 +114,10 @@ namespace RSA
 		//return textToOct(std::string(message.get_str()));
 	}
 
-	std::string Keygen::decrypt(std::string text, mpz_class m_privateKey, mpz_class m_publicKey)
+	std::string Keygen::decrypt(std::string text, mpz_class m_m_private_key, mpz_class m_m_public_key)
 	{
 		// check and throw exception
-		if (m_publicKey == 0 || m_privateKey == 0)
+		if (m_m_public_key == 0 || m_m_private_key == 0)
 			throw std::runtime_error("Key pair is not created! Cannot decrypt message");
 		std::cout << "Decrypting..." << std::endl;
 
@@ -131,7 +131,7 @@ namespace RSA
 		mpz_init(message_raw);
 
 		// decrypt message
-		mpz_powm(message_raw, encrypted_raw, m_privateKey.get_mpz_t(), m_publicKey.get_mpz_t());
+		mpz_powm(message_raw, encrypted_raw, m_m_private_key.get_mpz_t(), m_m_public_key.get_mpz_t());
 		mpz_clear(encrypted_raw);
 
 		// create mpz class and clear mpz_t
@@ -144,10 +144,10 @@ namespace RSA
 			full_message = std::string("0") + full_message;
 
 		// return final message
-		return octToText(full_message);
+		return oct_to_text(full_message);
 	}
 
-	std::string textToOct(std::string text)
+	std::string text_to_oct(std::string text)
 	{
 		std::string encoded;
 
@@ -176,7 +176,7 @@ namespace RSA
 		return encoded;
 	}
 	
-	std::string octToText(std::string text)
+	std::string oct_to_text(std::string text)
 	{
 		assert(text.length() % 3 == 0);
 

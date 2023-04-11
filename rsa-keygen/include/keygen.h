@@ -10,16 +10,16 @@ namespace RSA
 	// RSA exponent
 	static const mpz_class e("65537");
 	// macro encoding text in octal
-	std::string textToOct(std::string text);
+	std::string text_to_oct(std::string text);
 	// macro decoding octal to text
-	std::string octToText(std::string text);
+	std::string oct_to_text(std::string text);
 
 	class Keygen
 	{
 		// private key
-		mpz_class privateKey;
+		mpz_class m_private_key;
 		// public key
-		mpz_class publicKey;
+		mpz_class m_public_key;
 		// bits of a number to generate
 		const int m_size = 1024;
 	public:
@@ -28,15 +28,15 @@ namespace RSA
 		// deletes the key generator
 		~Keygen();
 		// generates both private and public keys
-		void generateKeyPair(void);
+		void generate_key_pair(void);
 		// returns generated public key
-		mpz_class getPublicKey(void);
+		mpz_class get_public_key(void);
 		// returns generated private key
-		mpz_class getPrivateKey(void);
+		mpz_class get_private_key(void);
 		// encrypts given text
 		std::string encrypt(std::string text);
 		// decrypts given text
-		std::string decrypt(std::string text, mpz_class m_privateKey, mpz_class m_publicKey);
+		std::string decrypt(std::string text, mpz_class private_key, mpz_class public_key);
 	};
 }
 

@@ -1,16 +1,16 @@
 #include "include/keygen.h"
 
-namespace RSA
+namespace rsa
 {
-	Keygen::Keygen(int size) : m_size(size), m_public_key(0), m_private_key(0) {}
+	keygen::keygen(int size) : m_size(size), m_public_key(0), m_private_key(0) {}
 
-	Keygen::~Keygen() {}
+	keygen::~keygen() {}
 
-	mpz_class Keygen::get_public_key(void) { return m_public_key; }
+	mpz_class keygen::get_public_key(void) { return m_public_key; }
 
-	mpz_class Keygen::get_private_key(void) { return m_private_key; }
+	mpz_class keygen::get_private_key(void) { return m_private_key; }
 
-	void Keygen::generate_key_pair(void)
+	void keygen::generate_key_pair(void)
 	{
 		// check if the keys are already created
 		if (m_public_key != 0 || m_private_key != 0)
@@ -82,7 +82,7 @@ namespace RSA
 		m_private_key = d;
 	}
 
-	std::string Keygen::encrypt(std::string text)
+	std::string keygen::encrypt(std::string text)
 	{
 		// check and generate new key if needed
 		if (m_public_key == 0 || m_private_key == 0)
@@ -111,10 +111,9 @@ namespace RSA
 		mpz_class encrypted(encrypted_raw);
 		mpz_clear(encrypted_raw);
 		return encrypted.get_str();
-		//return textToOct(std::string(message.get_str()));
 	}
 
-	std::string Keygen::decrypt(std::string text, mpz_class m_m_private_key, mpz_class m_m_public_key)
+	std::string keygen::decrypt(std::string text, mpz_class m_m_private_key, mpz_class m_m_public_key)
 	{
 		// check and throw exception
 		if (m_m_public_key == 0 || m_m_private_key == 0)

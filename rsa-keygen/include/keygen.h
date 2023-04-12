@@ -5,7 +5,7 @@
 #include <gmpxx.h>
 #include <cassert>
 
-namespace RSA
+namespace rsa
 {
 	// RSA exponent
 	static const mpz_class e("65537");
@@ -14,7 +14,7 @@ namespace RSA
 	// macro decoding octal to text
 	std::string oct_to_text(std::string text);
 
-	class Keygen
+	class keygen
 	{
 		// private key
 		mpz_class m_private_key;
@@ -24,9 +24,9 @@ namespace RSA
 		const int m_size = 1024;
 	public:
 		// creates key generator
-		Keygen(int size = 1024);
+		keygen(int size = 1024);
 		// deletes the key generator
-		~Keygen();
+		~keygen();
 		// generates both private and public keys
 		void generate_key_pair(void);
 		// returns generated public key

@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 	try
 	{
 		// create key generator and key pair
-		RSA::Keygen* K = new RSA::Keygen(1024);
+		rsa::keygen* K = new rsa::keygen(1024);
 		K->generate_key_pair();
 		std::cout << "private key: " << K->get_private_key() << std::endl << std::endl;
 		std::cout << "public key: " << K->get_public_key() << std::endl << std::endl;

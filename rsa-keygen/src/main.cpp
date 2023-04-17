@@ -5,8 +5,24 @@ int main(int argc, char* argv[])
 {
 	try
 	{
+		// get arguments from the command line
+		int bits = 1024;
+		if (argc == 2)
+		{
+			char* c;
+			bits = strtol(argv[1], &c, 10);
+		}
+		else if (argc > 2)
+		{
+#ifdef _WIN32
+			throw std::runtime_error("Usage: .\\rsa-keygen.exe \'bits\'");
+#else
+			throw std::runtime_error("Usage: ./output.out \'bits\'");
+#endif
+		}
+
 		// create key generator and key pair
-		rsa::keygen* K = new rsa::keygen(1024);
+		rsa::keygen* K = new rsa::keygen(bits);
 		K->generate_key_pair();
 		std::cout << "private key: " << K->get_private_key() << std::endl << std::endl;
 		std::cout << "public key: " << K->get_public_key() << std::endl << std::endl;

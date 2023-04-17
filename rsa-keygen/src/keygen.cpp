@@ -2,7 +2,7 @@
 
 namespace rsa
 {
-	keygen::keygen(int size) : m_size(size), m_public_key(0), m_private_key(0) {}
+	keygen::keygen(int size) : m_private_key(0), m_public_key(0), m_size(size) {}
 
 	keygen::~keygen() {}
 
@@ -181,7 +181,7 @@ namespace rsa
 
 		std::string decoded;
 
-		for (int i = 2; i < text.length(); i += 3)
+		for (int i = 2; i < (int)text.length(); i += 3)
 		{
 			std::string partial;
 			partial.push_back(text[i - 2]);

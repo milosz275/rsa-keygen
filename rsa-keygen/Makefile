@@ -7,7 +7,7 @@ SRC_DIR = src
 INC_DIR = include
 INCLUDES = -I.
 
-TARGET = output
+TARGET = rsa-keygen
 OBJECTS = $(addprefix $(BUILD_DIR)/, keygen.o main.o)
 
 all: $(TARGET)

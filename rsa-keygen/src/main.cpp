@@ -8,16 +8,13 @@ int main(int argc, char* argv[])
 		// get arguments from the command line
 		int bits = 1024;
 		if (argc == 2)
-		{
-			char* c;
-			bits = strtol(argv[1], &c, 10);
-		}
+			bits = strtol(argv[1], NULL, 10);
 		else if (argc > 2)
 		{
 #ifdef _WIN32
 			throw std::runtime_error("Usage: .\\rsa-keygen.exe \'bits\'");
 #else
-			throw std::runtime_error("Usage: ./output.out \'bits\'");
+			throw std::runtime_error("Usage: ./rsa-keygen \'bits\'");
 #endif
 		}
 

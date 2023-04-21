@@ -74,7 +74,7 @@ namespace rsa
 		// calculate d
 		mpz_t d_raw;
 		mpz_init(d_raw);
-		mpz_invert(d_raw, e.get_mpz_t(), phi_n.get_mpz_t());
+		mpz_invert(d_raw, s_e.get_mpz_t(), phi_n.get_mpz_t());
 		mpz_class d(d_raw);
 		mpz_clear(d_raw);
 
@@ -104,7 +104,7 @@ namespace rsa
 		mpz_init(encrypted_raw);
 		
 		// encrypt message
-		mpz_powm(encrypted_raw, message_raw, e.get_mpz_t(), m_public_key.get_mpz_t());
+		mpz_powm(encrypted_raw, message_raw, s_e.get_mpz_t(), m_public_key.get_mpz_t());
 		mpz_clear(message_raw);
 
 		// return string

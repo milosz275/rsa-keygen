@@ -7,8 +7,8 @@
 
 namespace rsa
 {
-	// RSA exponent
-	static const mpz_class e("65537");
+	// static RSA exponent
+	static const mpz_class s_e("65537");
 	// macro encoding text in octal
 	std::string text_to_oct(std::string text);
 	// macro decoding octal to text
